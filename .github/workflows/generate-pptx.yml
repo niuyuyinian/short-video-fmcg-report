@@ -1,0 +1,30 @@
+name: Generate PPTX from Markdown
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: true
+
+    - name: Install pandoc
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y pandoc
+
+    - name: Generate PPTX from Markdown
+      run: |
+        pandoc -t pptx -o short-video-report.pptx short-video-ppt-content.md
+
+    - name: Commit generated PPTX
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add short-video-report.pptx
+        git commit -m "Add generated PPTX" || echo "No changes to commit"
+        git push
